@@ -136,6 +136,12 @@ let CharacterDamageComponent =
         r = e.GetBulletInfo(),
         o = DamageById_1.configDamageById.GetConfig(t.DamageDataId);
       if (!o) return { DamageResult: 0, ToughResult: 0 };
+      if (
+        0 === o.CalculateType &&
+        this.Xte.HasAnyTag([-1388400236, 1940180710])
+      )
+        return { DamageResult: 0, ToughResult: 0 };
+      CharacterDamageComponent_1.nqr.Start();
       var i = new ExtraEffectBaseTypes_1.RequirementPayload(),
         r =
           ((i.BulletId = BigInt(r.BulletRowName)),
@@ -151,7 +157,9 @@ let CharacterDamageComponent =
             DamageData: o,
             Attacker: t.Attacker.CheckGetComponent(18),
             SourceType: Protocol_1.Aki.Protocol.XAs.Proto_FromBullet,
-            IsReaction: o.PayloadId !== damageDataPayloadIdDefault,
+            IsReaction:
+              (0, ConfigCommon_1.toBigIntTemp)(o.PayloadId) !==
+              damageDataPayloadIdDefault,
             Accumulation:
               ExtraEffectDamageAccumulation_1.DamageAccumulation.GetAccumulation(
                 e.Id
@@ -161,10 +169,13 @@ let CharacterDamageComponent =
               ModelManager_1.ModelManager.PlayerInfoModel.GetRandomSeed(),
           }),
         o =
-          (
+          (CharacterDamageComponent_1.nqr.Stop(),
+          CharacterDamageComponent_1.sqr.Start(),
           this.aqr(r),
+          CharacterDamageComponent_1.sqr.Stop(),
+          CharacterDamageComponent_1.hqr.Start(),
           this.ProcessDamage(i, r, a));
-      return o;
+      return CharacterDamageComponent_1.hqr.Stop(), o;
     }
     ExecuteBuffDamage(e, t, a) {
       e.Attacker =
@@ -235,7 +246,8 @@ let CharacterDamageComponent =
         ((i = r.tRr.GetSkillInfo(t.SkillId)?.SkillGenre), (t.SkillGenre = i)),
         (t.DamageType = a.DamageData.Type),
         (t.DamageSubTypes = a.DamageData.SubType),
-        (t.CalculateType = a.DamageData.CalculateType);
+        (t.CalculateType = a.DamageData.CalculateType),
+        CharacterDamageComponent_1.lqr.Start();
       const o = this._qr(r);
       var i = this.GetLocalDamage(t, a, o);
       let s = void 0;
@@ -260,6 +272,7 @@ let CharacterDamageComponent =
         ),
         (e = this.mqr(a, o, r));
       return (
+        CharacterDamageComponent_1.lqr.Stop(),
         { DamageResult: i.Damage, ToughResult: e }
       );
     }
@@ -327,9 +340,11 @@ let CharacterDamageComponent =
           );
     }
     _qr(e) {
-      var t = e.Ybr.GetAttributeHolder().CheckGetComponent(159).TakeSnapshot(),
+      var t = (e.Ybr.GetAttributeHolder() ?? e.Entity)
+          .CheckGetComponent(159)
+          .TakeSnapshot(),
         a =
-          this.Ybr?.GetAttributeHolder()
+          (this.Ybr?.GetAttributeHolder(!0) ?? this.Entity)
             .CheckGetComponent(159)
             .TakeSnapshot() ?? this.$te.TakeSnapshot();
       return {
@@ -353,30 +368,10 @@ let CharacterDamageComponent =
     gqr(e, t, a, r, o) {
       var i = e.DamageData,
         s = e.SkillLevel,
-        n = AbilityUtils_1.AbilityUtils.GetLevelValue(i.RateLv, s, 0),
-        m = e.ExtraRate;
-      if (e.IsReaction)
-        return (c = DamagePayloadById_1.configDamagePayloadById.GetConfig(
-          i.PayloadId
-        ))
-          ? CharacterDamageCalculations_1.Calculation.ReactionDamageRateCalculation(
-              t.AttackerSnapshot,
-              t.TargetSnapshot,
-              n,
-              i.Element,
-              c,
-              t.AttackerSnapshot.CurrentValues.Proto_ReactionEfficiency,
-              a
-            )
-          : (Log_1.Log.CheckError() &&
-              Log_1.Log.Error("Character", 19, "找不到结算参数表对应id", [
-                "id",
-                i.PayloadId,
-              ]),
-            0);
-      let h = 1;
-      var c,
-        n = this.Entity.GetComponent(0);
+        n = e.ExtraRate;
+      if (e.IsReaction) return 0;
+      let m = 1;
+      var h = this.Entity.GetComponent(0);
       return (
         !ModelManager_1.ModelManager.GameModeModel.IsMulti ||
           h.GetEntityType() !== Protocol_1.Aki.Protocol.kks.Proto_Monster ||
@@ -434,6 +429,7 @@ let CharacterDamageComponent =
       );
     }
     fqr(e, t, a) {
+      CharacterDamageComponent_1.pqr.Start();
       var r = t.DamageData,
         o =
           a.Attacker.Jbr?.GetWeaponType() ??
@@ -449,6 +445,7 @@ let CharacterDamageComponent =
           this.JudgeCritical(t, a.AttackerSnapshot));
       return (
         ExtraEffectSnapModifier_1.SnapModifier.PostCriticalModify(e, a),
+        CharacterDamageComponent_1.pqr.Stop(),
         r
       );
     }
@@ -535,7 +532,9 @@ let CharacterDamageComponent =
       var t = a.Attacker;
       const i = a.DamageData,
         s = Protocol_1.Aki.Protocol.U3n.create({
-          Fjn: MathUtils_1.MathUtils.BigIntToLong(i.Id),
+          Fjn: MathUtils_1.MathUtils.BigIntToLong(
+            (0, ConfigCommon_1.toBigIntTemp)(i.Id)
+          ),
           Wjn: a.SkillLevel,
           kjn: MathUtils_1.MathUtils.NumberToLong(
             t.Entity.GetComponent(0).GetCreatureDataId()
@@ -594,8 +593,7 @@ let CharacterDamageComponent =
                   Protocol_1.Aki.Protocol.G4s
                     .Proto_EDamageImmune_BuffEffectElement,
               }),
-              (r.IsCritical =
-                ModManager_1.ModManager.Settings.AlwaysCrit || t.IsCritical),
+              (r.IsCritical = t.IsCritical),
               (r.IsImmune = t.IsImmune),
               (r.IsTargetKilled = t.IsTargetKilled),
               Log_1.Log.CheckDebug() &&
@@ -623,7 +621,7 @@ let CharacterDamageComponent =
     uqr(e, t, a) {
       var r = t.Attacker.Entity,
         o = this.Entity,
-        i = (e.Damage),
+        i = (CharacterDamageComponent_1.Eqr.Start(), e.Damage),
         s = e.DamageData,
         i = [r, o, i, s, a, e, t.HitPosition];
       1 === s.CalculateType &&
@@ -644,21 +642,30 @@ let CharacterDamageComponent =
         EventSystem_1.EventSystem.Emit(
           EventDefine_1.EEventName.GlobalCharDamage,
           ...i
-        );
+        ),
+        CharacterDamageComponent_1.Eqr.Stop();
     }
     dqr(e, t, a) {
       var r = t.m1t;
-      e.SourceType !== Protocol_1.Aki.Protocol.XAs.Proto_FromEffect &&
-        (t?.m1t.TriggerEvents(0, this.m1t, a),
-        this.m1t.TriggerEvents(1, r, a)),
+      r &&
+        this.m1t &&
+        (e.SourceType !== Protocol_1.Aki.Protocol.XAs.Proto_FromEffect &&
+          (CharacterDamageComponent_1.Sqr.Start(),
+          r.TriggerEvents(0, this.m1t, a),
+          this.m1t.TriggerEvents(1, r, a),
+          CharacterDamageComponent_1.Sqr.Stop()),
         e.IsTargetKilled &&
-          (t?.m1t.TriggerEvents(6, r, a)),
+          (CharacterDamageComponent_1.yqr.Start(),
+          r.TriggerEvents(6, r, a),
+          CharacterDamageComponent_1.yqr.Stop()),
+        CharacterDamageComponent_1.Iqr.Start(),
         ExtraEffectDamageAccumulation_1.DamageAccumulation.ApplyEffects(
           e,
           a,
           t,
           this
-        );
+        ),
+        CharacterDamageComponent_1.Iqr.Stop());
     }
     Mqr(e, t) {
       var a = e.Attacker?.$te;
@@ -673,8 +680,9 @@ let CharacterDamageComponent =
           e.SpecialEnergy3,
           e.SpecialEnergy4,
         ].entries()) {
-          var s = CharacterAttributeTypes_1.specialEnergyIds[r],
-            n = AbilityUtils_1.AbilityUtils.GetLevelValue(o, i, 0);
+          // forte
+          var n = CharacterAttributeTypes_1.specialEnergyIds[r],
+            l = AbilityUtils_1.AbilityUtils.GetLevelValue(o, i, 0);
           if (ModManager_1.ModManager.Settings.NoCD) {
             var s = EntityManager_1.EntityManager.GetPlayerBluePrint();
             s && s.includes("Yinlin")
@@ -685,7 +693,7 @@ let CharacterDamageComponent =
                   n,
                   CharacterAttributeTypes_1.attributeIdsWithMax.get(n)
                 );
-          } else a.AddBaseValue(s, n);
+          } else a.AddBaseValue(n, l);
         }
       }
     }
@@ -694,18 +702,22 @@ let CharacterDamageComponent =
         o = e.AttackerSnapshot,
         e = e.TargetSnapshot,
         t =
-          (AbilityUtils_1.AbilityUtils.GetLevelValue(
+          (CharacterDamageComponent_1.Tqr.Start(),
+          AbilityUtils_1.AbilityUtils.GetLevelValue(
             t.DamageData.ToughLv,
             t.SkillLevel,
             0
           )),
         o =
-          (CharacterDamageCalculations_1.Calculation.ToughCalculation(
+          (CharacterDamageComponent_1.Tqr.Stop(),
+          CharacterDamageComponent_1.Lqr.Start(),
+          CharacterDamageCalculations_1.Calculation.ToughCalculation(
             o,
             e,
             t * a
           ));
-      if ((0 !== o)) {
+      if ((CharacterDamageComponent_1.Lqr.Stop(), 0 !== o)) {
+        CharacterDamageComponent_1.Dqr.Start();
         let e = 1;
         t = this.Entity.GetComponent(0);
         ModelManager_1.ModelManager.GameModeModel.IsMulti &&
@@ -723,9 +735,11 @@ let CharacterDamageComponent =
           this.$te.AddBaseValue(
             CharacterAttributeTypes_1.EAttributeId.Proto_Tough,
             -o * e
-          );
+          ),
+          CharacterDamageComponent_1.Dqr.Stop();
       }
       return (
+        CharacterDamageComponent_1.Rqr.Start(),
         0 <
         this.$te.GetCurrentValue(
           CharacterAttributeTypes_1.EAttributeId.Proto_Tough
@@ -755,6 +769,7 @@ let CharacterDamageComponent =
               CharacterAttributeTypes_1.EAttributeId.Proto_ToughRecover,
               0
             )),
+        CharacterDamageComponent_1.Rqr.Stop(),
         o
       );
     }
@@ -788,9 +803,11 @@ let CharacterDamageComponent =
       this.zbr && (this.zbr.EndTask(), (this.zbr = void 0));
     }
     aqr(e) {
-      var t = e.Attacker.Jbr?.GetSkillLevelByDamageId(e.DamageData.Id),
+      var t = e.Attacker.Jbr?.GetSkillLevelByDamageId(
+          (0, ConfigCommon_1.toBigIntTemp)(e.DamageData.Id)
+        ),
         a = e.Attacker.Entity.GetComponent(36)?.GetVisionLevelByDamageId(
-          e.DamageData.Id
+          (0, ConfigCommon_1.toBigIntTemp)(e.DamageData.Id)
         );
       t && 0 < t ? (e.SkillLevel = t) : a && 0 < a && (e.SkillLevel = a);
     }
@@ -878,19 +895,19 @@ let CharacterDamageComponent =
       )[1];
     }
   });
-(CharacterDamageComponent.nqr = void 0),
-  (CharacterDamageComponent.sqr = void 0),
-  (CharacterDamageComponent.hqr = void 0),
-  (CharacterDamageComponent.lqr = void 0),
-  (CharacterDamageComponent.pqr = void 0),
-  (CharacterDamageComponent.Eqr = void 0),
-  (CharacterDamageComponent.Sqr = void 0),
-  (CharacterDamageComponent.yqr = void 0),
-  (CharacterDamageComponent.Iqr = void 0),
-  (CharacterDamageComponent.Tqr = void 0),
-  (CharacterDamageComponent.Lqr = void 0),
-  (CharacterDamageComponent.Dqr = void 0),
-  (CharacterDamageComponent.Rqr = void 0),
+(CharacterDamageComponent.nqr = Stats_1.Stat.Create("ExecuteBulletDamage1")),
+  (CharacterDamageComponent.sqr = Stats_1.Stat.Create("ExecuteBulletDamage2")),
+  (CharacterDamageComponent.hqr = Stats_1.Stat.Create("ExecuteBulletDamage3")),
+  (CharacterDamageComponent.lqr = Stats_1.Stat.Create("ProcessDamage")),
+  (CharacterDamageComponent.pqr = Stats_1.Stat.Create("PreDamageCalculation")),
+  (CharacterDamageComponent.Eqr = Stats_1.Stat.Create("EventCharDamage")),
+  (CharacterDamageComponent.Sqr = Stats_1.Stat.Create("PostExecDamageResult1")),
+  (CharacterDamageComponent.yqr = Stats_1.Stat.Create("PostExecDamageResult2")),
+  (CharacterDamageComponent.Iqr = Stats_1.Stat.Create("PostExecDamageResult3")),
+  (CharacterDamageComponent.Tqr = Stats_1.Stat.Create("ExecToughReduce1")),
+  (CharacterDamageComponent.Lqr = Stats_1.Stat.Create("ExecToughReduce2")),
+  (CharacterDamageComponent.Dqr = Stats_1.Stat.Create("ExecToughReduce3")),
+  (CharacterDamageComponent.Rqr = Stats_1.Stat.Create("ExecToughReduce4")),
   __decorate(
     [CombatMessage_1.CombatNet.Listen("EFn", !1)],
     CharacterDamageComponent,

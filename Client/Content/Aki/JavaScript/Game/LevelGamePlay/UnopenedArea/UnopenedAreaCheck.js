@@ -39,7 +39,7 @@ class UnopenedAreaCheck {
   }
   Jwe(t, e) {}
   BinTest(t, e) {
-    return !1;
+    return false;
   }
   Clear() {
     (this.IsSplineInit = !1), this.$we.clear();

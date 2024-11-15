@@ -115,8 +115,7 @@ class UnopenedAreaPullback {
       !0
     );
   }
-  OnEnterUnopenedArea() {
-  }
+  OnEnterUnopenedArea() {}
   OnExitUnopenedArea() {
     this.hBe &&
       (EventSystem_1.EventSystem.Has(

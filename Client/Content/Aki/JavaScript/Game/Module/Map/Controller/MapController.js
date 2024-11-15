@@ -179,9 +179,6 @@ class MapController extends ControllerWithAssistantBase_1.ControllerWithAssistan
   static UpdateCustomMapMarkPosition(e, t) {
     MapController.cYt(0).UpdateCustomMapMarkPosition(e, t);
   }
-  static RequestCreateTemporaryTeleport(e, t) {
-    MapController.cYt(0).RequestCreateTemporaryTeleport(e, t);
-  }
   static RequestTrackEnrichmentArea(e) {
     MapController.cYt(0).RequestTrackEnrichmentArea(e);
   }

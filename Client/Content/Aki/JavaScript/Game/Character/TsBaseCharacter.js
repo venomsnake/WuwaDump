@@ -5,7 +5,7 @@ const UE = require("ue"),
   ObjectUtils_1 = require("../../Core/Utils/ObjectUtils"),
   EventDefine_1 = require("../Common/Event/EventDefine"),
   EventSystem_1 = require("../Common/Event/EventSystem"),
-  CharacterDitherEffectController_1 = require("../NewWorld/Character/Common/Component/Effect/CharacterDitherEffectController"),
+  CharacterDitherEffectController_1 = require("../NewWorld/Character/Common/Component/Effect/CharacterDitherEffectController_New"),
   CustomMovementDefine_1 = require("../NewWorld/Character/Common/Component/Move/CustomMovementDefine");
 class TsBaseCharacter extends UE.BaseCharacter {
   constructor() {

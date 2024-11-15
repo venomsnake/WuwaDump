@@ -28,7 +28,7 @@ class MobVacuum extends EntityManager_1.EntityManager {
   }
 
   static origPositions = {}
-  static MobVacuum(entity) {
+  static async MobVacuum(entity) {
     if (!ModManager_1.ModManager.Settings.MobVacuum) return;
     let comp = entity.Entity.GetComponent(1);
     if (!comp) {
@@ -43,7 +43,6 @@ class MobVacuum extends EntityManager_1.EntityManager {
             if (!(monsterPos.X)) {
                 return;
             }
-            ModMenu_1.MainMenu.KunLog("New entity vacuum " + entityId + "X: " + monsterPos.X + "Y: " + monsterPos.Y + "Z: " + monsterPos.Z);
             this.origPositions[entityId] = monsterPos;
         }
 
@@ -53,7 +52,6 @@ class MobVacuum extends EntityManager_1.EntityManager {
         let itsLimit = 5;
         timer = TimerSystem_1.TimerSystem.Forever(() => {
             if (!entity.Entity || its > itsLimit) {
-                ModMenu_1.MainMenu.KunLog("Vacuum entity failed " + entityId)
                 TimerSystem_1.TimerSystem.Remove(timer);
                 return;
             }
@@ -61,7 +59,6 @@ class MobVacuum extends EntityManager_1.EntityManager {
             its++;
             let distToPlayer = ModUtils_1.ModUtils.Getdistance2Player(this.GetPosition(entity.Entity));
             if (distToPlayer < 500) {
-                ModMenu_1.MainMenu.KunLog("Too close" + entityId + ",, " + distToPlayer)
                 TimerSystem_1.TimerSystem.Remove(timer);
                 return;
             }
@@ -69,13 +66,11 @@ class MobVacuum extends EntityManager_1.EntityManager {
             let playerpos = this.GetPlayerPos();
             let playerDistToSpawn = ModUtils_1.ModUtils.Getdistance(this.origPositions[entityId], playerpos)
             if (playerDistToSpawn > ModManager_1.ModManager.Settings.VacuumRadius * 100) {
-                ModMenu_1.MainMenu.KunLog("Too far from spawn" + entityId + ",, " + playerDistToSpawn);
                 TimerSystem_1.TimerSystem.Remove(timer);
                 return;
             }
 
             if (!this.isIndistance(entity)) {
-                ModMenu_1.MainMenu.KunLog("Too far away" + entityId);
                 TimerSystem_1.TimerSystem.Remove(timer);
                 return;
             }
@@ -87,13 +82,12 @@ class MobVacuum extends EntityManager_1.EntityManager {
 
             let ActorComp = entity.Entity.GetComponent(1);
             ActorComp.ActorInternal.K2_SetActorLocation(playerpos);
-            ModMenu_1.MainMenu.KunLog("Syncing" + entityId + " " + playerDistToSpawn)
             this.SyncMonster(entity, playerpos);
         }, 333);
     }
   }
 
-  static VacuumCollect(entity) {
+  static async VacuumCollect(entity) {
     if (!ModManager_1.ModManager.Settings.VacuumCollect) return;
     if (
       EntityFilter_1.EntityFilter.isneedLoot(
@@ -119,7 +113,8 @@ class MobVacuum extends EntityManager_1.EntityManager {
     t.PendingMoveInfos.push(i);
     let s = Protocol_1.Aki.Protocol.Yus.create();
     s.WRs.push(t.CollectPendingMoveInfos());
-    Net_1.Net.Send(28450 /*NetDefine_1.EPushMessageId.MovePackagePush*/, s);
+    // see BaseMovementSyncComponent.CollectSampleAndSend
+    Net_1.Net.Send(29926 /*NetDefine_1.EPushMessageId.MovePackagePush*/, s);
   }
 }
 //puerts.logger.info(debug)

@@ -54,9 +54,11 @@ class EntityManager {
 
   static GetPosition(Entity) {
     let a = Entity.GetComponent(1);
-    // let actor = a.ActorInternal;
-    // let pos = actor.K2_GetActorLocation();
-    let pos = a?.Owner.K2_GetActorLocation();
+    let actor = a.ActorInternal;
+    if (!actor) {
+        return null;
+    }
+    let pos = actor.K2_GetActorLocation();
 
     return pos;
   }
@@ -180,6 +182,7 @@ class EntityManager {
     }
   }
   static GetCurrRoleId() {
+    // probably no longer correct
     let player = this.GetPlayerEntity();
     return player.Components[0].wDe;
   }

@@ -28,7 +28,7 @@ class AceAntiCheatController extends ControllerBase_1.ControllerBase {
       Net_1.Net.Register(28584, AceAntiCheatController.PTa),
       EventSystem_1.EventSystem.Add(
         EventDefine_1.EEventName.WorldDone,
-        this.nye,
+        this.nye
       ),
       !0
     );
@@ -38,7 +38,7 @@ class AceAntiCheatController extends ControllerBase_1.ControllerBase {
       Net_1.Net.UnRegister(28584),
       EventSystem_1.EventSystem.Remove(
         EventDefine_1.EEventName.WorldDone,
-        this.nye,
+        this.nye
       ),
       !0
     );
@@ -65,8 +65,23 @@ class AceAntiCheatController extends ControllerBase_1.ControllerBase {
   static ILa(t) {}
   static TLa(t) {}
   static DLa(t) {}
-  static Cah(t) {}
-  static gah() {}
+  static Cah(t) {
+    var e = InputController_1.InputController.CreateInputLayer(99);
+    e &&
+      (InputController_1.InputController.AddInputLayer(t, e),
+      this.oah || (this.oah = []),
+      this.oah.push(e));
+  }
+  static gah() {
+    if (this.oah) {
+      for (const t of this.oah)
+        t.Clear(), InputController_1.InputController.RemoveInputLayer(t);
+      this.oah = void 0;
+    }
+  }
+  static HandlePress(t, e) {
+    this.LZo(t, e);
+  }
 }
 (exports.AceAntiCheatController = AceAntiCheatController),
   ((_a = AceAntiCheatController).FTa = -1n),
@@ -75,6 +90,7 @@ class AceAntiCheatController extends ControllerBase_1.ControllerBase {
   (AceAntiCheatController.ELa = -1n),
   (AceAntiCheatController.LLa = -1n),
   (AceAntiCheatController.oah = void 0),
+  (AceAntiCheatController.PTa = (t) => {}),
   (AceAntiCheatController.VTa = 0),
   (AceAntiCheatController.BTa = 0),
   (AceAntiCheatController.qTa = 0),
@@ -118,11 +134,5 @@ class AceAntiCheatController extends ControllerBase_1.ControllerBase {
   (AceAntiCheatController.yLa = void 0),
   (AceAntiCheatController.VLa = void 0),
   (AceAntiCheatController.ReportDataRequest = () => {}),
-  (AceAntiCheatController.nye = () => {
-    _a.VLa ||
-      (_a.VLa = TimerSystem_1.TimerSystem.Forever(
-        _a.ReportDataRequest,
-        REPORTDATA2TIME
-      ));
-  });
+  (AceAntiCheatController.nye = () => {});
 //# sourceMappingURL=AceAntiCheatController.js.map

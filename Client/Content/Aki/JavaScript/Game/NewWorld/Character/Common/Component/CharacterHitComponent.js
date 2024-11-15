@@ -57,6 +57,7 @@ const UE = require("ue"),
   ModelManager_1 = require("../../../../Manager/ModelManager"),
   EntityManager_1 = require("../../../../Manager/ModFuncs/EntityManager"),
   KillAura_1 = require("../../../../Manager/ModFuncs/KillAura"),
+  ModManager_1 = require("../../../../Manager/ModManager"),
   BattleUiDefine_1 = require("../../../../Module/BattleUi/BattleUiDefine"),
   CombatMessage_1 = require("../../../../Module/CombatMessage/CombatMessage"),
   GamepadController_1 = require("../../../../Module/Gamepad/GamepadController"),
@@ -67,7 +68,6 @@ const UE = require("ue"),
   BulletStaticFunction_1 = require("../../../Bullet/BulletStaticMethod/BulletStaticFunction"),
   BulletTypes_1 = require("../../../Bullet/BulletTypes"),
   BulletUtil_1 = require("../../../Bullet/BulletUtil"),
-  ModManager_1 = require("../../../../Manager/ModManager"),
   FightLibrary_1 = require("../Blueprint/Utils/FightLibrary"),
   CharacterBuffIds_1 = require("./Abilities/CharacterBuffIds"),
   CharacterUnifiedStateTypes_1 = require("./Abilities/CharacterUnifiedStateTypes"),
@@ -782,6 +782,47 @@ let CharacterHitComponent =
         (t.TWn.EWn = ""),
         (t.TWn.CWn = 0));
     }
+    OnHitOne(t, i, e, s, h, r, o, a, n) {
+      CharacterHitComponent_1.$Vr.Start(),
+        (this.rVr = t),
+        (this.LastHitData = t),
+        (this.iVr = EntitySystem_1.EntitySystem.Get(t.Attacker.Id)),
+        (this.nVr = i),
+        (this.aVr = s),
+        (this.hVr = r),
+        (this.lVr = o),
+        (this._Vr = a),
+        (this.IVr = h),
+        (this.fVr = !1),
+        (this.vll = !1),
+        CharacterHitComponent_1.YVr.Start(),
+        this.JVr(),
+        this.zVr(e),
+        this.IsTriggerCounterAttack ? this.ZVr() : (this.Leh = this.Aeh(e)),
+        CharacterHitComponent_1.YVr.Stop(),
+        CharacterHitComponent_1.e6r.Start(),
+        this.t6r(),
+        CharacterHitComponent_1.e6r.Stop(),
+        CharacterHitComponent_1.i6r.Start(),
+        this.o6r(),
+        CharacterHitComponent_1.i6r.Stop(),
+        this.iwr(e),
+        CharacterHitComponent_1.r6r.Start(),
+        this.n6r(),
+        CharacterHitComponent_1.r6r.Stop(),
+        CharacterHitComponent_1.s6r.Start(),
+        this.a6r(e),
+        CharacterHitComponent_1.s6r.Stop(),
+        GlobalData_1.GlobalData.Networking() && this.XVr(e),
+        CharacterHitComponent_1.h6r.Start(),
+        this.l6r(),
+        CharacterHitComponent_1.h6r.Stop(),
+        CharacterHitComponent_1.pSa.Start(),
+        this.ProcessOnHitMaterial(),
+        CharacterHitComponent_1.pSa.Stop(),
+        CharacterHitComponent_1.$Vr.Stop(),
+        this.jVr();
+    }
     OnHit(t, i, e, s, h, r, o, a, n) {
       var l = Global_1.Global.BaseCharacter?.CharacterActorComponent.Entity,
         c = EntitySystem_1.EntitySystem.Get(t.Target.Id),
@@ -1121,44 +1162,112 @@ let CharacterHitComponent =
         : ((t = this.v6r(i, this.sVr, !1)),
           (this.ToughDecreaseValue = t.ToughResult));
     }
-    v6r(t, i, e, s = -1, h = 1) {
-      var r,
-        o,
-        a = t.ReBulletData.Base.DamageId,
-        n = t.Target;
-      return a < 1 || !n
-        ? { DamageResult: 0, ToughResult: 0 }
-        : ((n = t.Target.GetComponent(18)),
-          (o = t.Target.GetComponent(34)),
-          n && o
-            ? ((r = EntitySystem_1.EntitySystem.Get(
-                t.BulletEntityId
-              )?.GetBulletInfo().ContextId),
-              (o = o.CurrentSkill),
-              n?.ExecuteBulletDamage(
-                t.BulletEntityId,
-                {
-                  DamageDataId: a,
-                  SkillLevel: t.SkillLevel,
-                  Attacker: t.Attacker,
-                  HitPosition: t.HitPosition.ToUeVector(),
-                  IsAddEnergy: this.aVr,
-                  IsCounterAttack: this.IsTriggerCounterAttack,
-                  ForceCritical: i,
-                  IsBlocked: e,
-                  PartId: s,
-                  ExtraRate: h,
-                  CounterSkillMessageId: this.IsTriggerCounterAttack
-                    ? o?.CombatMessageId
-                    : void 0,
-                  BulletId: t.BulletId,
-                  CounterSkillId: this.IsTriggerCounterAttack
-                    ? Number(o?.SkillId)
-                    : void 0,
-                },
-                r
-              ))
-            : { DamageResult: DEFAULT_DAMAGE, ToughResult: 0 });
+    v6r(t, e, i, r = -1, o = 1) {
+      var a,
+        n,
+        s = t.ReBulletData.Base.DamageId,
+        h = t.Target.GetComponent(18),
+        n = t.Target.GetComponent(34);
+      a = EntitySystem_1.EntitySystem.Get(t.BulletEntityId)?.GetBulletInfo()
+        .ContextId;
+      const dict = {
+        DamageDataId: s,
+        SkillLevel: t.SkillLevel,
+        Attacker: t.Attacker,
+        HitPosition: t.HitPosition.ToUeVector(),
+        IsAddEnergy: this.aVr,
+        IsCounterAttack: this.IsTriggerCounterAttack,
+        ForceCritical: e,
+        IsBlocked: i,
+        PartId: r,
+        ExtraRate: o,
+        CounterSkillMessageId: this.IsTriggerCounterAttack
+          ? n.CurrentSkill?.CombatMessageId
+          : void 0,
+        BulletId: t.BulletId,
+        CounterSkillId: this.IsTriggerCounterAttack
+          ? Number(n.CurrentSkill?.SkillId)
+          : void 0,
+      };
+
+      if (ModManager_1.ModManager.Settings.HitAll) {
+        let l =
+            Global_1.Global.BaseCharacter?.CharacterActorComponent.Entity.Id,
+          m = t.Attacker.Id;
+        if (m == l) {
+          ModelManager_1.ModelManager.CreatureModel.GetAllEntities().forEach(
+            (entity) => {
+              if (
+                EntityManager_1.EntityManager.isMonster(entity) &&
+                KillAura_1.KillAura.isIndistance(entity)
+              ) {
+                try {
+                  TimerSystem_1.TimerSystem.Delay(() => {
+                    const Entity = entity.Entity;
+                    if (
+                      Entity &&
+                      EntitySystem_1.EntitySystem.Get(
+                        t.BulletEntityId
+                      )?.GetBulletInfo()
+                    ) {
+                      const entityPos =
+                        Entity.GetComponent(3).ActorLocationProxy;
+                      let CharacterPartComponent = Entity.GetComponent(61);
+                      if (
+                        Entity.GetComponent(18) &&
+                        Entity.GetComponent(34) &&
+                        CharacterPartComponent &&
+                        entityPos
+                      ) {
+                        CharacterPartComponent.OnInitData();
+                        CharacterPartComponent.OnInit();
+                        CharacterPartComponent.OnActivate();
+                        dict.HitPosition = entityPos.ToUeVector();
+                        if (
+                          ModManager_1.ModManager.Settings.killAuraState == 1
+                        ) {
+                          dict.DamageDataId = 1205401001n;
+                          Entity.GetComponent(18)?.ExecuteBulletDamage(
+                            t.BulletEntityId,
+                            dict,
+                            a
+                          );
+                          dict.DamageDataId = 1301400001n;
+                          Entity.GetComponent(18)?.ExecuteBulletDamage(
+                            t.BulletEntityId,
+                            dict,
+                            a
+                          );
+                        } else {
+                          if (s >= 1) {
+                            Entity.GetComponent(18)?.ExecuteBulletDamage(
+                              t.BulletEntityId,
+                              dict,
+                              a
+                            );
+                          }
+                        }
+                      }
+                    }
+                  }, Math.floor(Math.random() * 100) + 20);
+                } catch {}
+              }
+            }
+          );
+        }
+      }
+
+      return s < 1 || !h
+        ? {
+            DamageResult: 0,
+            ToughResult: 0,
+          }
+        : h && n
+        ? h?.ExecuteBulletDamage(t.BulletEntityId, dict, a)
+        : {
+            DamageResult: 1e4,
+            ToughResult: 0,
+          };
     }
     C6r(t) {
       var t = Object.assign(t),
@@ -2024,19 +2133,19 @@ let CharacterHitComponent =
       }
     }
   });
-  (CharacterHitComponent.GVr = void 0),
-  (CharacterHitComponent.$Vr = void 0),
-  (CharacterHitComponent.YVr = void 0),
-  (CharacterHitComponent.e6r = void 0),
-  (CharacterHitComponent.i6r = void 0),
-  (CharacterHitComponent.r6r = void 0),
-  (CharacterHitComponent.s6r = void 0),
-  (CharacterHitComponent.h6r = void 0),
-  (CharacterHitComponent.pSa = void 0),
-  (CharacterHitComponent.rHo = void 0),
-  (CharacterHitComponent.E6r = void 0),
-  (CharacterHitComponent.S6r = void 0),
-  (CharacterHitComponent.T6r = void 0),
+(CharacterHitComponent.GVr = void 0),
+  (CharacterHitComponent.$Vr = Stats_1.Stat.Create("OnHit")),
+  (CharacterHitComponent.YVr = Stats_1.Stat.Create("OnHit0")),
+  (CharacterHitComponent.e6r = Stats_1.Stat.Create("OnHit1")),
+  (CharacterHitComponent.i6r = Stats_1.Stat.Create("OnHit2")),
+  (CharacterHitComponent.r6r = Stats_1.Stat.Create("OnHit3")),
+  (CharacterHitComponent.s6r = Stats_1.Stat.Create("OnHit4")),
+  (CharacterHitComponent.h6r = Stats_1.Stat.Create("OnHit5")),
+  (CharacterHitComponent.pSa = Stats_1.Stat.Create("OnHit6")),
+  (CharacterHitComponent.rHo = Stats_1.Stat.Create("PlayHitEffect")),
+  (CharacterHitComponent.E6r = Stats_1.Stat.Create("ProcessMain1")),
+  (CharacterHitComponent.S6r = Stats_1.Stat.Create("ProcessMain2")),
+  (CharacterHitComponent.T6r = Stats_1.Stat.Create("ProcessMain3")),
   (CharacterHitComponent.O6r = (t) => {}),
   __decorate(
     [CombatMessage_1.CombatNet.PreHandle("TFn")],

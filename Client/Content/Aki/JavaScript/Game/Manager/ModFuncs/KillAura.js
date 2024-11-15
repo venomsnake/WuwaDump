@@ -31,13 +31,16 @@ const dropanimal = [
 class KillAura extends EntityManager_1.EntityManager {
   static isIndistance(entity) {
     let monsterPos = this.GetPosition(entity.Entity);
+    if (!monsterPos) {
+        return false;
+    }
     let distance = ModUtils_1.ModUtils.Getdistance2Player(monsterPos);
     if (distance < ModManager_1.ModManager.Settings.killAuraRadius * 100) {
       return true;
     } return false;
   }
 
-  static killAura(entity) {
+  static async killAura(entity) {
     if (!ModManager_1.ModManager.Settings.killAuranew) return;
     if (!entity.Entity) return;
 
@@ -45,8 +48,10 @@ class KillAura extends EntityManager_1.EntityManager {
       ModMethod_1.ModMethod.MonsterKillRequest(entity.Entity);
     }
   }
-  static KillAnimal(entity) {
+  static async KillAnimal(entity) {
     if (!ModManager_1.ModManager.Settings.KillAnimal) return;
+    if (!entity.Entity) return;
+
     let blueprintType = this.GetBlueprintType2(entity);
     if (AnimalList.includes(blueprintType)) {
       ModMethod_1.ModMethod.AnimalDieRequest(entity.Entity);

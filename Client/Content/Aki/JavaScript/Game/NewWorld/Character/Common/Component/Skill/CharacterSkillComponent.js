@@ -1407,8 +1407,8 @@ let CharacterSkillComponent =
               FormationAttributeController_1.FormationAttributeController.AddValue(
                 1,
                 ModManager_1.ModManager.Settings.InfiniteStamina
-                ? 0
-                : i.StrengthCost
+                  ? 0
+                  : i.StrengthCost
               ),
             this.Xzr.Stop(),
             this.GetSkillLevelBySkillInfoId(t.SkillId));
@@ -1570,9 +1570,11 @@ let CharacterSkillComponent =
           );
     }
     IsSkillInCd(t) {
-      return( 
-        !ModManager_1.ModManager.Settings.NoCD && 
-        !!this.dZr && this.dZr.IsSkillInCd(t));
+      return (
+        !ModManager_1.ModManager.Settings.NoCD &&
+        !!this.dZr &&
+        this.dZr.IsSkillInCd(t)
+      );
     }
     GetCurrentMontageCorrespondingSkillId() {
       var t,
@@ -2063,16 +2065,15 @@ let CharacterSkillComponent =
     }
     IsCanUseSkill(t) {
       var i;
-      return (
-        !!ModManager_1.ModManager.Settings.NoCD ||
-        !!this.CheckIsLoaded() &&
-        !(
-          !(i = this.GetSkillInfo(t)) ||
-          this.IsSkillInCd(t) ||
-          !this.jZr(i.GroupId, this.GetPriority(t)) ||
-          this.IsSkillGenreForbidden(i)
-        )
-      );
+      return ModManager_1.ModManager.Settings.NoCD
+        ? true
+        : !!this.CheckIsLoaded() &&
+            !(
+              !(i = this.GetSkillInfo(t)) ||
+              this.IsSkillInCd(t) ||
+              !this.jZr(i.GroupId, this.GetPriority(t)) ||
+              this.IsSkillGenreForbidden(i)
+            );
     }
     ResetRoleGrowComponent(t) {
       this.mZr || (this.mZr = t);

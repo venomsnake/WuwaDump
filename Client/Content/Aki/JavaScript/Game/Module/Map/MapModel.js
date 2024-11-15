@@ -172,7 +172,7 @@ class MapModel extends ModelBase_1.ModelBase {
         this.TDi?.set(i.MarkId, i),
         EventSystem_1.EventSystem.Emit(
           EventDefine_1.EEventName.CreateMapMark,
-          i
+          i,
         );
     }
   }
@@ -181,7 +181,7 @@ class MapModel extends ModelBase_1.ModelBase {
       EventDefine_1.EEventName.TrackMapMark,
       e,
       t,
-      i
+      i,
     ),
       i ||
         (this.EDi &&
@@ -234,7 +234,7 @@ class MapModel extends ModelBase_1.ModelBase {
       EventSystem_1.EventSystem.Emit(
         EventDefine_1.EEventName.RemoveMapMark,
         e,
-        t
+        t,
       );
   }
   RemoveMapMarksByConfigId(e, t) {
@@ -273,7 +273,7 @@ class MapModel extends ModelBase_1.ModelBase {
         EventDefine_1.EEventName.MapReplaceMarkResponse,
         9,
         e,
-        t
+        t,
       ));
   }
   SpawnDynamicMarkId() {
@@ -290,12 +290,12 @@ class MapModel extends ModelBase_1.ModelBase {
         n.TeleportEntityConfigId &&
           ControllerHolder_1.ControllerHolder.CreatureController.ChangeLockTagByTeleportPbDataId(
             n.TeleportEntityConfigId,
-            1196894179
+            1196894179,
           ),
           this.LDi.set(n.Id, !0),
           EventSystem_1.EventSystem.Emit(
             EventDefine_1.EEventName.UnlockTeleport,
-            n.Id
+            n.Id,
           );
     }
   }
@@ -306,11 +306,11 @@ class MapModel extends ModelBase_1.ModelBase {
       t.TeleportEntityConfigId &&
       ControllerHolder_1.ControllerHolder.CreatureController.ChangeLockTagByTeleportPbDataId(
         t.TeleportEntityConfigId,
-        1196894179
+        1196894179,
       ),
       EventSystem_1.EventSystem.Emit(
         EventDefine_1.EEventName.UnlockTeleport,
-        e
+        e,
       );
   }
   CheckTeleportUnlocked(e) {
@@ -327,7 +327,7 @@ class MapModel extends ModelBase_1.ModelBase {
       this.zll(e),
       EventSystem_1.EventSystem.Emit(
         EventDefine_1.EEventName.MapOpenFogChange,
-        e
+        e,
       );
   }
   FullUpdateUnlockedFogs(e) {
@@ -335,7 +335,7 @@ class MapModel extends ModelBase_1.ModelBase {
     for (const t of e) this.Yll.set(t, !0), this.zll(t);
     EventSystem_1.EventSystem.Emit(
       EventDefine_1.EEventName.MapOpenFogFullUpdate,
-      this.Yll
+      this.Yll,
     );
   }
   zll(e) {
@@ -394,7 +394,7 @@ class MapModel extends ModelBase_1.ModelBase {
     (t = ModelManager_1.ModelManager.GameModeModel.InstanceDungeon.MapConfigId),
       (t = UnopenedAreaController_1.UnopenedAreaController.OnCheckUnopenedArea(
         e,
-        t
+        t,
       ));
     return t && this.LastSafeLocation.DeepCopy(e), t;
   }
@@ -402,21 +402,14 @@ class MapModel extends ModelBase_1.ModelBase {
     return this.LastSafeLocation;
   }
   IsInUnopenedAreaPullback() {
-    var e;
-    return (
-      !!ModelManager_1.ModelManager.GameModeModel.WorldDone &&
-      !ModelManager_1.ModelManager.GameModeModel.IsTeleport &&
-      ((e = ModelManager_1.ModelManager.GameModeModel.InstanceDungeon.Id),
-      !!MapUtil_1.MapUtil.IsInBigWorld(e)) &&
-      UnopenedAreaController_1.UnopenedAreaController.CheckInPullback()
-    );
+    // here
   }
   SetMarkExtraShowState(e, t, i, r) {
     return (
       this.UDi.set(e, { Id: e, IsShow: t, NeedFocus: i, ShowFlag: r }),
       EventSystem_1.EventSystem.Emit(
         EventDefine_1.EEventName.OnMarkItemShowStateChange,
-        e
+        e,
       ),
       i
     );
@@ -443,7 +436,7 @@ class MapModel extends ModelBase_1.ModelBase {
             ControllerHolder_1.ControllerHolder.LevelGeneralController.CheckCondition(
               i.toString(),
               void 0,
-              !1
+              !1,
             ))
         )
           break;
@@ -459,11 +452,11 @@ class MapModel extends ModelBase_1.ModelBase {
   GetMarkForceVisible(e, t) {
     let i = !0;
     e = this.SDi.get(e);
-    return (i = e && e.has(t) ? e.get(t) ?? !1 : i);
+    return (i = e && e.has(t) ? (e.get(t) ?? !1) : i);
   }
   AddOccupationInfo(e) {
     var t = ConfigManager_1.ConfigManager.QuestNewConfig.GetNewOccupationConfig(
-      e.qEs
+      e.qEs,
     );
     if (
       t &&
@@ -501,7 +494,7 @@ class MapModel extends ModelBase_1.ModelBase {
     var e =
         ConfigManager_1.ConfigManager.MapConfig.GetEntityConfigByMapIdAndEntityId(
           e,
-          t
+          t,
         )?.AreaId ?? 0,
       t = ConfigManager_1.ConfigManager.AreaConfig.GetParentAreaId(e),
       e = ConfigManager_1.ConfigManager.AreaConfig.GetAreaInfo(e),
@@ -514,7 +507,7 @@ class MapModel extends ModelBase_1.ModelBase {
         : "",
       e = e
         ? ConfigManager_1.ConfigManager.InfluenceConfig.GetCountryTitle(
-            e.CountryId
+            e.CountryId,
           )
         : "";
     return 0 === t?.Father ? e + "-" + i : e + `-${r}-` + i;
